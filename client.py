@@ -718,7 +718,6 @@ def post_container(url, token, container, headers, http_conn=None,
     path = '%s/%s' % (parsed.path, quote(container))
     method = 'POST'
     headers['X-Auth-Token'] = token
-    print ('storage policy is ' + str(headers['X-Storage-Policy']))
     if not 'content-length' in (k.lower() for k in headers):
         headers['Content-Length'] = '0'
     conn.request(method, path, '', headers)

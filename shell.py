@@ -787,9 +787,6 @@ def st_post(parser, args, thread_manager):
         if options.policy_name is not None:
             headers['X-Storage-Policy'] = options.policy_name
         try:
-            print("Calling container post")
-            if 'X-Storage-Policy' in headers:
-                print ('storage policy is ' + str(headers['X-Storage-Policy']))
             conn.post_container(args[0], headers=headers)
         except ClientException as err:
             if err.http_status != 404:
@@ -1176,13 +1173,15 @@ def st_upload(parser, args, thread_manager):
             if msg:
                 msg += ': '
             msg += err.http_response_content[:60]
-        thread_manager.error(
-            'Error trying to create container %r: %s', args[0],
-            msg)
+        if '409' not in msg:
+            thread_manager.error(
+                'Error trying to create container %r: %s', args[0],
+                msg)
     except Exception as err:
-        thread_manager.error(
-            'Error trying to create container %r: %s', args[0],
-            err)
+        if '409' not in err:
+            thread_manager.error(
+                'Error trying to create container %r: %s', args[0],
+                err)
 
     if options.object_name is not None:
         if len(args[1:]) > 1:
